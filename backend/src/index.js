@@ -16,7 +16,10 @@ app.listen(port, async()=>{
     console.log(`Server is running on port ${port}`);
     console.log("\n---[Test db conection]---");
     try {
+        await prisma.$connect();
 
+        const user = await prisma.user.findMany({take: 1});
+        console.log(user);
         //Aqui debe de regresar algo de la base de datos, simplemente para probar la conexion
     } catch (error) {
         //throw new Error('Error connecting to database');
