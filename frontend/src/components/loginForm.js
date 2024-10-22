@@ -32,22 +32,22 @@ export default function LoginForm() {
 
   return (
     <form className="bg-white p-8 rounded-lg shadow-md space-y-4" onSubmit={handleLogin}>
-      <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Iniciar sesión</h1>
       {error && <p className="text-red-500">{error}</p>}
       <Input
         type="email"
-        placeholder="Email"
+        placeholder="Correo"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <Input
         type="password"
-        placeholder="Password"
+        placeholder="Contraseña"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
       <button className="bg-blue-500 text-white py-2 rounded-md w-full hover:bg-blue-600">
-        Log in
+      Iniciar sesión
       </button>
     </form>
   );
