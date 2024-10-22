@@ -9,12 +9,77 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DB_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model Estudiante {
+  num_cuenta  Int     @id
+  nombre      String  @db.VarChar(80)
+  apellido    String  @db.VarChar(80)
+  correo_ucol String  @unique @db.VarChar(100)
+  clases      EstudianteClase[]
+  asistencia  Asistencia[]
+}
+
+model Profesor {
+  num_trabajador  Int     @id
+  nombre          String  @db.VarChar(80)
+  apellido        String  @db.VarChar(80)
+  correo_ucol     String  @unique @db.VarChar(100)
+  clases          Clase[]
+}
+
+model Curso {
+  id_curso Int    @id @default(autoincrement())
+  nombre   String @db.VarChar(100)
+  clases   Clase[]
+}
+
+model Clase {
+  id_clase   Int        @id @default(autoincrement())
+  fecha      DateTime
+  curso      Curso      @relation(fields: [id_curso], references: [id_curso])
+  id_curso   Int
+  profesor   Profesor   @relation(fields: [id_profesor], references: [num_trabajador])
+  id_profesor Int
+  asistencias Asistencia[]
+  estudiantes EstudianteClase[]
+}
+
+model Asistencia {
+  id            Int        @id @default(autoincrement())
+  clase         Clase      @relation(fields: [id_clase], references: [id_clase])
+  id_clase      Int
+  estudiante    Estudiante @relation(fields: [id_estudiante], references: [num_cuenta])
+  id_estudiante Int
+  estado        EstadoAsistencia
+  marca_tiempo  DateTime   @default(now())
+}
+
+model Usuario {
+  id_usuario     Int      @id @default(autoincrement())
+  nombre_usuario String   @unique @db.VarChar(50)
+  contrasena     String   @db.VarChar(12)
+  rol            Rol
+}
+
+model EstudianteClase {
+  id            Int        @id @default(autoincrement())
+  clase         Clase      @relation(fields: [id_clase], references: [id_clase])
+  id_clase      Int
+  estudiante    Estudiante @relation(fields: [id_estudiante], references: [num_cuenta])
+  id_estudiante Int
+}
+
+enum Rol {
+  profesor
+  admin
+}
+
+enum EstadoAsistencia {
+  Presente
+  Ausente
+  Retardo
+  Justificado
 }
