@@ -1,7 +1,6 @@
 import prisma from "../prisma.js";
 import bcryptjs from "bcryptjs";
-import crypto from "crypto";
-import { generateTokenAndSetCookies } from "../utils/generateTokenAndSetCookies.js";
+import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookies.js";
 
 export const signup = async(req, res)=>{
     const {email, password} = req.body;
