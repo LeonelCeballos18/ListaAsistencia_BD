@@ -13,73 +13,96 @@ datasource db {
   url      = env("DB_URL")
 }
 
+model SemestreGrupo {
+  id       Int      @id @default(autoincrement())
+  semestre Int
+  grupo    String   @db.VarChar(1)
+  estudiantes Estudiante[]
+  clases      Clase[]
+}
+
 model Estudiante {
-  num_cuenta  Int     @id
-  nombre      String  @db.VarChar(80)
-  apellido    String  @db.VarChar(80)
-  correo_ucol String  @unique @db.VarChar(100)
-  clases      EstudianteClase[]
-  asistencia  Asistencia[]
+  num_cuenta       Int          @id
+  nombre           String       @db.VarChar(80)
+  apellido         String       @db.VarChar(80)
+  correo_ucol      String       @unique @db.VarChar(50)
+  id_semestre_grupo Int?
+  semestreGrupo    SemestreGrupo? @relation(fields: [id_semestre_grupo], references: [id])
+  estudianteClases EstudianteClase[]
+  asistencias      Asistencia[]
 }
 
 model Profesor {
-  num_trabajador  Int     @id
-  nombre          String  @db.VarChar(80)
-  apellido        String  @db.VarChar(80)
-  correo_ucol     String  @unique @db.VarChar(100)
-  clases          Clase[]
+  num_trabajador Int     @id
+  nombre         String  @db.VarChar(80)
+  apellido       String  @db.VarChar(80)
+  correo_ucol    String  @unique @db.VarChar(50)
+  clases         Clase[]
 }
 
 model Curso {
-  id_curso Int    @id @default(autoincrement())
-  nombre   String @db.VarChar(100)
-  clases   Clase[]
+  id     Int     @id @default(autoincrement())
+  nombre String  @db.VarChar(100)
+  clases Clase[]
 }
 
 model Clase {
-  id_clase   Int        @id @default(autoincrement())
-  fecha      DateTime
-  curso      Curso      @relation(fields: [id_curso], references: [id_curso])
-  id_curso   Int
-  profesor   Profesor   @relation(fields: [id_profesor], references: [num_trabajador])
-  id_profesor Int
-  asistencias Asistencia[]
-  estudiantes EstudianteClase[]
-}
-
-model Asistencia {
-  id            Int        @id @default(autoincrement())
-  clase         Clase      @relation(fields: [id_clase], references: [id_clase])
-  id_clase      Int
-  estudiante    Estudiante @relation(fields: [id_estudiante], references: [num_cuenta])
-  id_estudiante Int
-  estado        EstadoAsistencia
-  marca_tiempo  DateTime   @default(now())
-}
-
-model Usuario {
-  id_usuario     Int      @id @default(autoincrement())
-  nombre_usuario String   @unique @db.VarChar(50)
-  contrasena     String   @db.VarChar(12)
-  rol            Rol
+  id_clase          Int             @id @default(autoincrement())
+  id_curso          Int?
+  id_profesor       Int?
+  id_semestre_grupo Int?
+  dia_semana        DiaSemana
+  hora_inicio       DateTime        @db.Time
+  hora_fin          DateTime        @db.Time
+  curso             Curso?          @relation(fields: [id_curso], references: [id])
+  profesor          Profesor?       @relation(fields: [id_profesor], references: [num_trabajador])
+  semestreGrupo     SemestreGrupo?  @relation(fields: [id_semestre_grupo], references: [id])
+  estudianteClases  EstudianteClase[]
+  asistencias       Asistencia[]
 }
 
 model EstudianteClase {
-  id            Int        @id @default(autoincrement())
-  clase         Clase      @relation(fields: [id_clase], references: [id_clase])
-  id_clase      Int
-  estudiante    Estudiante @relation(fields: [id_estudiante], references: [num_cuenta])
-  id_estudiante Int
+  id           Int       @id @default(autoincrement())
+  id_clase     Int?
+  id_estudiante Int?
+  clase        Clase?    @relation(fields: [id_clase], references: [id_clase])
+  estudiante   Estudiante? @relation(fields: [id_estudiante], references: [num_cuenta])
+}
+
+model Asistencia {
+  id           Int       @id @default(autoincrement())
+  id_clase     Int?
+  id_estudiante Int?
+  estado       Estado
+  comentarios  String?   @db.VarChar(200)
+  marca_tiempo DateTime  @default(now())
+  clase        Clase?    @relation(fields: [id_clase], references: [id_clase])
+  estudiante   Estudiante? @relation(fields: [id_estudiante], references: [num_cuenta])
+}
+
+model Usuario {
+  id_usuario     Int     @id @default(autoincrement())
+  nombre_usuario String  @unique @db.VarChar(50)
+  contrasena     String  @db.VarChar(255)
+  rol            Rol
+}
+
+enum DiaSemana {
+  Lunes
+  Martes
+  Miercoles
+  Jueves
+  Viernes
+}
+
+enum Estado {
+  Presente
+  Ausente
+  Retardo
+  Justificado
 }
 
 enum Rol {
   profesor
   admin
-}
-
-enum EstadoAsistencia {
-  Presente
-  Ausente
-  Retardo
-  Justificado
 }

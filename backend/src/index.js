@@ -8,21 +8,21 @@ const port = 4006;
 app.use(express.json());
 app.use(cookieParser());
 
-app.get("/", (req, res)=>{
-    res.send("Hello world");
-})
+app.get("/", (req, res) => {
+  res.send("Hello world");
+});
 
-app.listen(port, async()=>{
-    console.log(`Server is running on port ${port}`);
-    console.log("\n---[Test db conection]---");
-    try {
-        await prisma.$connect();
+app.listen(port, async () => {
+  console.log(`Server is running on port ${port}`);
+  console.log("\n---[Test db conection]---");
+  try {
+    await prisma.$connect();
 
-        const user = await prisma.user.findMany({take: 1});
-        console.log(user);
-        //Aqui debe de regresar algo de la base de datos, simplemente para probar la conexion
-    } catch (error) {
-        //throw new Error('Error connecting to database');
-        console.error('Error connecting to the database:', error);
-    }
+    const estudiantes = await prisma.estudiante.findMany();
+    console.log(estudiantes);
+    //Aqui debe de regresar algo de la base de datos, simplemente para probar la conexion
+  } catch (error) {
+    //throw new Error('Error connecting to database');
+    console.error("Error connecting to the database:", error);
+  }
 });
